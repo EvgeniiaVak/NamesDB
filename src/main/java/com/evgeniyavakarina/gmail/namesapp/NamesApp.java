@@ -2,7 +2,6 @@ package com.evgeniyavakarina.gmail.namesapp;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,13 +38,16 @@ public class NamesApp extends Application{
         findButton = (Button) scene.lookup("#find_name_button");
         findButton.setOnAction(this::findName);
 
-        ObservableList<String> items = FXCollections.observableArrayList(dbHandler.getNames());
         nameDataListView = (ListView<String>) scene.lookup("#name_data_list_view");
-        nameDataListView.setItems(items);
-
         beginSpinner = (Spinner<Integer>) scene.lookup("#begin_spinner");
         endSpinner = (Spinner<Integer>) scene.lookup("#end_spinner");
-        updateListRange();
+        int max = dbHandler.getNumberOfNames();
+        beginSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max));
+        endSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max));
+
+        beginSpinner.getValueFactory().setValue(1);
+        endSpinner.getValueFactory().setValue(max);
+        updateObservableList();
 
         primaryStage.setTitle("Names");
         primaryStage.setScene(scene);
@@ -61,15 +63,7 @@ public class NamesApp extends Application{
     }
 
     public void findName(ActionEvent e) {
-        ArrayList<String> updatedList = null;
-
-        if (inputId.getText().length() == 0) {
-            updatedList = dbHandler.getNames(beginSpinner.getValue(), endSpinner.getValue());
-        } else {
-            updatedList = dbHandler.getNames(Integer.parseInt(inputId.getText()));
-        }
-
-        nameDataListView.setItems(FXCollections.observableArrayList(updatedList));
+        updateObservableList();
     }
 
     @Override
@@ -79,10 +73,27 @@ public class NamesApp extends Application{
 
     private void updateListRange() {
         int max = dbHandler.getNumberOfNames();
-        beginSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max));
-        beginSpinner.getValueFactory().setValue(1);
-        endSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max));
-        endSpinner.getValueFactory().setValue(max);
-        findName(null);
+        ((SpinnerValueFactory.IntegerSpinnerValueFactory)beginSpinner.getValueFactory()).setMax(max);
+        ((SpinnerValueFactory.IntegerSpinnerValueFactory)endSpinner.getValueFactory()).setMax(max);
+    }
+
+    private void updateObservableList() {
+        int min = beginSpinner.getValue();
+        int max = endSpinner.getValue();
+
+        //check that user input is valid
+        if ((inputId.getText()).matches("(\\d)+")) {
+            int id = Integer.parseInt(inputId.getText());
+            if (id >= min && id <= max)
+                //find only that name if so
+                min = max = id;
+            else
+                inputId.setText("");
+        } else {
+            inputId.setText("");
+        }
+
+        ArrayList<String> updatedList = dbHandler.getNames(min, max);
+        nameDataListView.setItems(FXCollections.observableArrayList(updatedList));
     }
 }
