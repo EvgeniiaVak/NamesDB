@@ -14,15 +14,15 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 public class NamesApp extends Application{
     private DBHandler dbHandler;
-
 
     @FXML private TextField inputName, inputId;
     @FXML private Button saveButton, findButton;
     @FXML private Label saveNameSuccess, findNameSuccess;
     @FXML private ListView<String> nameDataListView;
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -58,10 +58,15 @@ public class NamesApp extends Application{
     }
 
     public void findName(ActionEvent e) {
+        ArrayList<String> updatedList = null;
+
         if (inputId.getText().length() == 0) {
-            findNameSuccess.setText("success");
+            updatedList = dbHandler.getNames();
+        } else {
+            updatedList = dbHandler.getNames(Integer.parseInt(inputId.getText()));
         }
-        findNameSuccess.setText(dbHandler.getName(Integer.parseInt(inputId.getText())));
+
+        nameDataListView.setItems(FXCollections.observableArrayList(updatedList));
     }
 
     @Override
