@@ -6,6 +6,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DBHandler {
     private SimpleDriverDataSource dataSource;
@@ -34,11 +35,22 @@ public class DBHandler {
     }
 
     public ArrayList<String> getNames () {
-        return null;
+        List<NameData> data = jdbcTemplate.query("SELECT * FROM names;", new NameRowMapper());
+        ArrayList<String> result = new ArrayList<>();
+        for (NameData nameData :
+                data) {
+            result.add(nameData.toString());
+        }
+        return result;
     }
 
-    public ArrayList<String> getNames(int id) {
-        return null;
+    public String getName(int id) {
+        NameData data = jdbcTemplate.query(
+                "SELECT * FROM names WHERE id IN (?);",
+                new Object[]{id},
+                new NameRowMapper())
+                .get(0);
+        return data.getName();
     }
     public ArrayList<String> getNames(int fromId, int toId) {
         return null;

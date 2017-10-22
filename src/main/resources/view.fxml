@@ -55,7 +55,7 @@
                     </right>
                 </BorderPane>
 
-                <ListView VBox.vgrow="ALWAYS" />
+                <ListView fx:id="name_data_list_view" VBox.vgrow="ALWAYS" />
             </VBox>
         </Tab>
 
