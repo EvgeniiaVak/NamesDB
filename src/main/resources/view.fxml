@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
     <TabPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
         <Tab fx:id="enter_name_tab" closable="false" text="Add Name">
@@ -24,9 +24,9 @@
                     </VBox.margin>
                 </TextField>
 
-                <Button fx:id="save_name_button" alignment="CENTER" layoutX="323.0" layoutY="14.0" onAction="#onSaveName" prefHeight="42.0" prefWidth="63.0" text="Save" textFill="#000000cc" VBox.vgrow="ALWAYS" />
+                <Button fx:id="save_name_button" alignment="CENTER" layoutX="323.0" layoutY="14.0" prefHeight="42.0" prefWidth="63.0" text="Save" textFill="#000000cc" VBox.vgrow="ALWAYS" />
 
-                <Label fx:id="save_state_label" layoutX="40.0" layoutY="90.0" prefHeight="163.0" prefWidth="322.0" textFill="#000000cc">
+                <Label fx:id="save_success_label" layoutX="40.0" layoutY="90.0" prefHeight="163.0" prefWidth="322.0" textFill="#000000cc">
                <font>
                   <Font size="25.0" />
                </font></Label>
@@ -45,7 +45,7 @@
                         </VBox.margin>
                     </TextField>
 
-                    <Button fx:id="find_name_button" onAction="#findName" text="Find" textFill="#000000cc" />
+                    <Button fx:id="find_name_button" text="Find" textFill="#000000cc" />
                 </HBox>
 
                 <ListView VBox.vgrow="ALWAYS" />
