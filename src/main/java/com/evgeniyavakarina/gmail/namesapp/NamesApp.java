@@ -8,10 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -21,8 +18,9 @@ public class NamesApp extends Application{
 
     @FXML private TextField inputName, inputId;
     @FXML private Button saveButton, findButton;
-    @FXML private Label saveNameSuccess, findNameSuccess;
+    @FXML private Label saveNameSuccess;
     @FXML private ListView<String> nameDataListView;
+    @FXML private Spinner<Integer> beginSpinner, endSpinner;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -30,20 +28,24 @@ public class NamesApp extends Application{
         Scene scene = new Scene(root);
         dbHandler = new DBHandler();
 
-        //elements
+        //save tab elements
         inputName = (TextField) scene.lookup("#enter_a_name_text_field");
         saveButton = (Button) scene.lookup("#save_name_button");
         saveButton.setOnAction(this::onSaveName);
         saveNameSuccess = (Label) scene.lookup("#save_success_label");
 
+        //search tab elements
         inputId = (TextField) scene.lookup("#enter_id_text_field");
         findButton = (Button) scene.lookup("#find_name_button");
         findButton.setOnAction(this::findName);
-        findNameSuccess = (Label) scene.lookup("#find_name_success_label");
 
         ObservableList<String> items = FXCollections.observableArrayList(dbHandler.getNames());
         nameDataListView = (ListView<String>) scene.lookup("#name_data_list_view");
         nameDataListView.setItems(items);
+
+        beginSpinner = (Spinner<Integer>) scene.lookup("#begin_spinner");
+        endSpinner = (Spinner<Integer>) scene.lookup("#end_spinner");
+        updateListRange();
 
         primaryStage.setTitle("Names");
         primaryStage.setScene(scene);
@@ -54,6 +56,7 @@ public class NamesApp extends Application{
         String name = inputName.getText();
         if (dbHandler.putName(name)) {
             saveNameSuccess.setText("saved " + name);
+            updateListRange();
         }
     }
 
@@ -61,7 +64,7 @@ public class NamesApp extends Application{
         ArrayList<String> updatedList = null;
 
         if (inputId.getText().length() == 0) {
-            updatedList = dbHandler.getNames();
+            updatedList = dbHandler.getNames(beginSpinner.getValue(), endSpinner.getValue());
         } else {
             updatedList = dbHandler.getNames(Integer.parseInt(inputId.getText()));
         }
@@ -72,5 +75,14 @@ public class NamesApp extends Application{
     @Override
     public void stop() throws Exception {
         dbHandler.close();
+    }
+
+    private void updateListRange() {
+        int max = dbHandler.getNumberOfNames();
+        beginSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max));
+        beginSpinner.getValueFactory().setValue(1);
+        endSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max));
+        endSpinner.getValueFactory().setValue(max);
+        findName(null);
     }
 }

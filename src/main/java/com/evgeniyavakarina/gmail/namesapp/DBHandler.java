@@ -34,8 +34,7 @@ public class DBHandler {
     }
 
     public ArrayList<String> getNames () {
-        int end = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM names", Integer.class);
-        return getNames(1, end);
+        return getNames(1, getNumberOfNames());
     }
 
     public ArrayList<String> getNames(int id) {
@@ -59,5 +58,9 @@ public class DBHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getNumberOfNames() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM names", Integer.class);
     }
 }
